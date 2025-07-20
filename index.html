@@ -431,23 +431,82 @@
             downloadButton.addEventListener('click', function () {
                 const isDarkMode = document.documentElement.classList.contains('dark');
 
+                // First alert - security information
                 Swal.fire({
-                    title: 'Informasi Pengembangan',
+                    title: 'Informasi Keamanan',
                     html: `
-                    <div class="text-center">
-                        <i class="fas fa-tools text-4xl mb-4" style="color: ${isDarkMode ? '#F57C00' : '#FF9800'}"></i>
-                        <p class="mb-4 text-lg">Aplikasi HandyCraft saat ini masih dalam tahap pengembangan. Silakan pantau terus perkembangan kami!</p>
-                    </div>
+                <div class="text-center">
+                    <i class="fas fa-shield-alt text-4xl mb-4" style="color: ${isDarkMode ? '#F57C00' : '#FF9800'}"></i>
+                    <p class="mb-4 text-lg">Aplikasi HandyCraft aman untuk diunduh dan diinstall. Aplikasi ini tidak mengandung malware atau virus.</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Silakan masukkan password untuk melanjutkan unduhan.</p>
+                </div>
                 `,
                     icon: 'info',
                     iconColor: isDarkMode ? '#F57C00' : '#FF9800',
-                    confirmButtonText: 'Mengerti',
+                    confirmButtonText: 'Lanjutkan',
                     confirmButtonColor: isDarkMode ? '#F57C00' : '#FF9800',
                     background: isDarkMode ? '#2D2D2D' : '#FFFFFF',
                     color: isDarkMode ? '#E5E5E5' : '#333333',
                     customClass: {
                         popup: 'font-poppins',
                         confirmButton: 'focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Password prompt
+                        Swal.fire({
+                            title: 'Masukkan Password',
+                            input: 'password',
+                            inputAttributes: {
+                                autocapitalize: 'off',
+                                autocorrect: 'off',
+                                placeholder: 'Masukkan password'
+                            },
+                            icon: 'question',
+                            iconColor: isDarkMode ? '#F57C00' : '#FF9800',
+                            showCancelButton: true,
+                            confirmButtonText: 'Download',
+                            confirmButtonColor: isDarkMode ? '#F57C00' : '#FF9800',
+                            cancelButtonText: 'Batal',
+                            background: isDarkMode ? '#2D2D2D' : '#FFFFFF',
+                            color: isDarkMode ? '#E5E5E5' : '#333333',
+                            customClass: {
+                                popup: 'font-poppins',
+                                confirmButton: 'focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
+                            },
+                            preConfirm: (password) => {
+                                if (password !== '12341234') {
+                                    Swal.showValidationMessage('Password salah! Silakan coba lagi.')
+                                }
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Create a temporary link to trigger the download
+                                const link = document.createElement('a');
+                                link.href = './assets/app/RahmatHandyCraft.apk';
+                                link.download = 'RahmatHandyCraft.apk';
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+
+                                // Success message
+                                Swal.fire({
+                                    title: 'Download Dimulai!',
+                                    html: `
+                                <div class="text-center">
+                                    <i class="fas fa-check-circle text-4xl mb-4" style="color: #4CAF50"></i>
+                                    <p class="mb-4 text-lg">Aplikasi HandyCraft sedang diunduh. Silakan install setelah download selesai.</p>
+                                </div>
+                                `,
+                                    icon: 'success',
+                                    iconColor: '#4CAF50',
+                                    confirmButtonText: 'Mengerti',
+                                    confirmButtonColor: isDarkMode ? '#F57C00' : '#FF9800',
+                                    background: isDarkMode ? '#2D2D2D' : '#FFFFFF',
+                                    color: isDarkMode ? '#E5E5E5' : '#333333'
+                                });
+                            }
+                        });
                     }
                 });
             });
